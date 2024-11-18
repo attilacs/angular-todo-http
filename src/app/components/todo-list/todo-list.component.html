@@ -1,5 +1,8 @@
 @if(todos().length) {
 <ul>
+    @for(todo of todos(); track todo.id) {
+    <app-todo-item [todo]="todo" />
+    }
 </ul>
 } @else {
 <p>No todos to show</p>
