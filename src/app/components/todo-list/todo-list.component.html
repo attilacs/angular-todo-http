@@ -1,0 +1,9 @@
+@if(todos().length) {
+<ul>
+</ul>
+} @else {
+<p>No todos to show</p>
+}
+@if(status().error){
+<p>{{ status().error }}</p>
+}
