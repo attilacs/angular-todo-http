@@ -13,6 +13,14 @@ export class TodoItemComponent {
 	private todoService = inject(TodoService);
 	todo = input.required<Todo>();
 
+	toggleTodo() {
+		const todo: Todo = {
+			...this.todo(),
+			completed: !this.todo().completed,
+		};
+		this.todoService.updateTodo(todo);
+	}
+
 	deleteTodo() {
 		this.todoService.deleteTodo(this.todo().id);
 	}
