@@ -12,6 +12,9 @@ import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
 export class TodoHeaderComponent {
 	private readonly todoService = inject(TodoService);
 	status = this.todoService.status;
+	isAllCompleted = this.todoService.isAllCompleted;
+	allTodosCount = this.todoService.allTodosCount;
+
 	form = new FormGroup({
 		title: new FormControl(""),
 	});
@@ -27,5 +30,10 @@ export class TodoHeaderComponent {
 		}
 		this.todoService.addTodo(title);
 		this.form.reset();
+	}
+
+	toggleAll(e: Event) {
+		const input = e.target as HTMLInputElement;
+		this.todoService.toggleAll(input.checked);
 	}
 }

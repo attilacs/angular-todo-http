@@ -1,7 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { computed, inject, Injectable, signal } from "@angular/core";
 import type { Todo, TodoDto } from "../interfaces/todo";
-import { finalize } from "rxjs";
+import { finalize, forkJoin } from "rxjs";
 
 interface LoadingState {
 	isLoading: boolean;
@@ -24,6 +24,12 @@ export class TodoService {
 		isLoading: this.isLoading(),
 		error: this.errorMessage(),
 	}));
+
+	isAllCompleted = computed<boolean>(() =>
+		this.todosLoaded().every((todo) => todo.completed),
+	);
+
+	allTodosCount = computed<number>(() => this.todosLoaded().length);
 
 	getTodos(): void {
 		this.initLoading();
@@ -87,6 +93,23 @@ export class TodoService {
 					this.errorMessage.set("Failed to update todo.");
 				},
 			});
+	}
+
+	toggleAll(completed: boolean) {
+		const todos = this.todosLoaded().map((todo) => ({ ...todo, completed }));
+		const updateRequests = todos.map((todo) =>
+			this.http.put(`${this.apiUrl}/${todo.id}`, todo),
+		);
+		forkJoin(updateRequests).subscribe({
+			next: () => {
+				this.todosLoaded.set(todos);
+				this.isLoading.set(false);
+			},
+			error: () => {
+				this.errorMessage.set("Failed to update todos.");
+				this.isLoading.set(false);
+			},
+		});
 	}
 
 	deleteTodo(id: string): void {
