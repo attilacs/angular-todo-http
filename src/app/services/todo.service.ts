@@ -67,6 +67,28 @@ export class TodoService {
 			});
 	}
 
+	deleteTodo(id: string): void {
+		this.initLoading();
+		this.http
+			.delete(`${this.apiUrl}/${id}`)
+			.pipe(
+				finalize(() => {
+					this.isLoading.set(false);
+				}),
+			)
+			.subscribe({
+				next: () => {
+					const updatedTodos = this.todosLoaded().filter(
+						(todo) => todo.id !== id,
+					);
+					this.todosLoaded.set(updatedTodos);
+				},
+				error: () => {
+					this.errorMessage.set("Failed to delete todo.");
+				},
+			});
+	}
+
 	private initLoading(): void {
 		this.isLoading.set(true);
 		this.errorMessage.set(null);

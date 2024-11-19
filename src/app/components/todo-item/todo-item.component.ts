@@ -1,5 +1,6 @@
-import { Component, input } from "@angular/core";
+import { Component, inject, input } from "@angular/core";
 import type { Todo } from "../../interfaces/todo";
+import { TodoService } from "../../services/todo.service";
 
 @Component({
 	selector: "app-todo-item",
@@ -9,5 +10,10 @@ import type { Todo } from "../../interfaces/todo";
 	styleUrl: "./todo-item.component.scss",
 })
 export class TodoItemComponent {
+	private todoService = inject(TodoService);
 	todo = input.required<Todo>();
+
+	deleteTodo() {
+		this.todoService.deleteTodo(this.todo().id);
+	}
 }
