@@ -44,6 +44,28 @@ export class TodoService {
 			});
 	}
 
+	addTodo(title: string): void {
+		const todo: TodoDto = {
+			title,
+			completed: false,
+		};
+		this.initLoading();
+		this.http
+			.post<Todo>(this.apiUrl, todo)
+			.pipe(
+				finalize(() => {
+					this.isLoading.set(false);
+				}),
+			)
+			.subscribe({
+				next: (todo: Todo) => {
+					this.todosLoaded.set([...this.todosLoaded(), todo]);
+				},
+				error: () => {
+					this.errorMessage.set("Failed to add todo.");
+				},
+			});
+	}
 
 	private initLoading(): void {
 		this.isLoading.set(true);
