@@ -1,5 +1,10 @@
 <li>
+    @if(isEditing()) {
+    <input #todoInputRef [(ngModel)]="title" (keyup.enter)="updateTitle()" (blur)="handleBlur()"
+        (focus)="handleFocus()" />
+    } @else {
     <input type="checkbox" [checked]="todo().completed" (click)="toggleTodo()">
-    <span>{{ todo().title }}</span>
+    <span (dblclick)="startEdit()">{{ todo().title }}</span>
     <button type="button" (click)="deleteTodo()">Delete</button>
+    }
 </li>
