@@ -1,0 +1,4 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <input type="text" formControlName="title" (keyup.enter)="onEnter()" placeholder="What needs to be done?"
+        autofocus="" />
+</form>
