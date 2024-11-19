@@ -67,6 +67,28 @@ export class TodoService {
 			});
 	}
 
+	updateTodo(todo: Todo) {
+		this.initLoading();
+		this.http
+			.put(`${this.apiUrl}/${todo.id}`, todo)
+			.pipe(
+				finalize(() => {
+					this.isLoading.set(false);
+				}),
+			)
+			.subscribe({
+				next: () => {
+					const updatedTodos = this.todosLoaded().map((t) =>
+						t.id === todo.id ? todo : t,
+					);
+					this.todosLoaded.set(updatedTodos);
+				},
+				error: () => {
+					this.errorMessage.set("Failed to update todo.");
+				},
+			});
+	}
+
 	deleteTodo(id: string): void {
 		this.initLoading();
 		this.http
