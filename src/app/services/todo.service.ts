@@ -31,6 +31,10 @@ export class TodoService {
 
 	allTodosCount = computed<number>(() => this.todosLoaded().length);
 
+	activeTodosCount = computed<number>(
+		() => this.todosLoaded().filter((todo) => !todo.completed).length,
+	);
+
 	getTodos(): void {
 		this.initLoading();
 		this.http
