@@ -18,7 +18,9 @@ export class TodoService {
 	private errorMessage = signal<string | null>(null);
 	private isLoading = signal<boolean>(false);
 
-	todos = this.todosLoaded.asReadonly();
+	constructor() {
+		this.getTodos();
+	}
 
 	status = computed<LoadingState>(() => ({
 		isLoading: this.isLoading(),
@@ -161,6 +163,20 @@ export class TodoService {
 				this.isLoading.set(false);
 			},
 		});
+	}
+
+	filterTodos(path = "all"): Todo[] {
+		switch (path) {
+			case "active": {
+				return this.todosLoaded().filter((todo) => !todo.completed);
+			}
+			case "completed": {
+				return this.todosLoaded().filter((todo) => todo.completed);
+			}
+			default: {
+				return this.todosLoaded();
+			}
+		}
 	}
 
 	private initLoading(): void {

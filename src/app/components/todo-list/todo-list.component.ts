@@ -1,6 +1,7 @@
-import { Component, inject, type OnInit } from "@angular/core";
+import { Component, inject } from "@angular/core";
 import { TodoService } from "../../services/todo.service";
 import { TodoItemComponent } from "../todo-item/todo-item.component";
+import { Location } from "@angular/common";
 
 @Component({
 	selector: "app-todo-list",
@@ -9,12 +10,13 @@ import { TodoItemComponent } from "../todo-item/todo-item.component";
 	templateUrl: "./todo-list.component.html",
 	styleUrl: "./todo-list.component.scss",
 })
-export class TodoListComponent implements OnInit {
+export class TodoListComponent {
 	private readonly todoService = inject(TodoService);
-	todos = this.todoService.todos;
+	private location = inject(Location);
 	status = this.todoService.status;
 
-	ngOnInit(): void {
-		this.todoService.getTodos();
+	get todos() {
+		const path = this.location.path().split("/")[1] || "all";
+		return this.todoService.filterTodos(path);
 	}
 }

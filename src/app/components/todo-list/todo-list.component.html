@@ -1,6 +1,6 @@
-@if(todos().length) {
+@if(todos.length) {
 <ul>
-    @for(todo of todos(); track todo.id) {
+    @for(todo of todos; track todo.id) {
     <app-todo-item [todo]="todo" />
     }
 </ul>
