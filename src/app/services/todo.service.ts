@@ -13,10 +13,12 @@ interface LoadingState {
 })
 export class TodoService {
 	private http = inject(HttpClient);
+	private readonly storageKey = "todos";
 	private readonly apiUrl = "http://localhost:3000/todos";
 	private todosLoaded = signal<Todo[]>([]);
 	private errorMessage = signal<string | null>(null);
 	private isLoading = signal<boolean>(false);
+	private isApiAvailable = signal<boolean>(true);
 
 	constructor() {
 		this.getTodos();
@@ -55,19 +57,30 @@ export class TodoService {
 					this.todosLoaded.set(todos);
 				},
 				error: () => {
-					this.errorMessage.set("Failed to load todos.");
+					this.getTodosFromStorage();
+					this.isApiAvailable.set(false);
 				},
 			});
 	}
 
 	addTodo(title: string): void {
-		const todo: TodoDto = {
+		const todoDto: TodoDto = {
 			title,
 			completed: false,
 		};
+		if (!this.isApiAvailable()) {
+			const id = new Date().getTime().toString();
+			const todo: Todo = {
+				...todoDto,
+				id,
+			};
+			const todos = [...this.todosLoaded(), todo];
+			this.saveTodosToStorage(todos);
+			return;
+		}
 		this.initLoading();
 		this.http
-			.post<Todo>(this.apiUrl, todo)
+			.post<Todo>(this.apiUrl, todoDto)
 			.pipe(
 				finalize(() => {
 					this.isLoading.set(false);
@@ -84,6 +97,13 @@ export class TodoService {
 	}
 
 	updateTodo(todo: Todo) {
+		const updatedTodos = this.todosLoaded().map((t) =>
+			t.id === todo.id ? todo : t,
+		);
+		if (!this.isApiAvailable()) {
+			this.saveTodosToStorage(updatedTodos);
+			return;
+		}
 		this.initLoading();
 		this.http
 			.put(`${this.apiUrl}/${todo.id}`, todo)
@@ -94,9 +114,6 @@ export class TodoService {
 			)
 			.subscribe({
 				next: () => {
-					const updatedTodos = this.todosLoaded().map((t) =>
-						t.id === todo.id ? todo : t,
-					);
 					this.todosLoaded.set(updatedTodos);
 				},
 				error: () => {
@@ -107,6 +124,10 @@ export class TodoService {
 
 	toggleAll(completed: boolean) {
 		const todos = this.todosLoaded().map((todo) => ({ ...todo, completed }));
+		if (!this.isApiAvailable()) {
+			this.saveTodosToStorage(todos);
+			return;
+		}
 		const updateRequests = todos.map((todo) =>
 			this.http.put(`${this.apiUrl}/${todo.id}`, todo),
 		);
@@ -123,6 +144,11 @@ export class TodoService {
 	}
 
 	deleteTodo(id: string): void {
+		const updatedTodos = this.todosLoaded().filter((todo) => todo.id !== id);
+		if (!this.isApiAvailable()) {
+			this.saveTodosToStorage(updatedTodos);
+			return;
+		}
 		this.initLoading();
 		this.http
 			.delete(`${this.apiUrl}/${id}`)
@@ -133,9 +159,6 @@ export class TodoService {
 			)
 			.subscribe({
 				next: () => {
-					const updatedTodos = this.todosLoaded().filter(
-						(todo) => todo.id !== id,
-					);
 					this.todosLoaded.set(updatedTodos);
 				},
 				error: () => {
@@ -147,14 +170,18 @@ export class TodoService {
 	clearCompleted() {
 		const completedTodos = this.todosLoaded().filter((todo) => todo.completed);
 		const comletedIds = completedTodos.map((todo) => todo.id);
+		const updatedTodos = this.todosLoaded().filter(
+			(todo) => !comletedIds.includes(todo.id),
+		);
+		if (!this.isApiAvailable()) {
+			this.saveTodosToStorage(updatedTodos);
+			return;
+		}
 		const deleteRequests = completedTodos.map((todo) =>
 			this.http.delete(`${this.apiUrl}/${todo.id}`),
 		);
 		forkJoin(deleteRequests).subscribe({
 			next: () => {
-				const updatedTodos = this.todosLoaded().filter(
-					(todo) => !comletedIds.includes(todo.id),
-				);
 				this.todosLoaded.set(updatedTodos);
 				this.isLoading.set(false);
 			},
@@ -182,5 +209,16 @@ export class TodoService {
 	private initLoading(): void {
 		this.isLoading.set(true);
 		this.errorMessage.set(null);
+	}
+
+	private getTodosFromStorage(): void {
+		const todosJson = sessionStorage.getItem(this.storageKey);
+		const todos = todosJson ? JSON.parse(todosJson) : [];
+		this.todosLoaded.set(todos);
+	}
+
+	private saveTodosToStorage(todos: Todo[]): void {
+		sessionStorage.setItem(this.storageKey, JSON.stringify(todos));
+		this.todosLoaded.set(todos);
 	}
 }
