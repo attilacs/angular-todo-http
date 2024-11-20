@@ -3,6 +3,17 @@
     <div>
         <span>{{ activeTodosText() }}</span>
     </div>
+    <ul>
+        <li>
+            <a routerLink="/" [class.selected]="path ==='all'">All</a>
+        </li>
+        <li>
+            <a routerLink="/active" [class.selected]="path ==='active'">Active</a>
+        </li>
+        <li>
+            <a routerLink="/completed" [class.selected]="path ==='completed'">Completed</a>
+        </li>
+    </ul>
     @if(someTodoComleted()){
     <button type="button" (click)="clearCompleted()">Clear completed</button>
     }
