@@ -3,5 +3,8 @@
     <div>
         <span>{{ activeTodosText() }}</span>
     </div>
+    @if(someTodoComleted()){
+    <button type="button" (click)="clearCompleted()">Clear completed</button>
+    }
 </footer>
 }

@@ -35,6 +35,10 @@ export class TodoService {
 		() => this.todosLoaded().filter((todo) => !todo.completed).length,
 	);
 
+	someTodoComleted = computed<boolean>(() =>
+		this.todosLoaded().some((todo) => todo.completed),
+	);
+
 	getTodos(): void {
 		this.initLoading();
 		this.http
@@ -136,6 +140,27 @@ export class TodoService {
 					this.errorMessage.set("Failed to delete todo.");
 				},
 			});
+	}
+
+	clearCompleted() {
+		const completedTodos = this.todosLoaded().filter((todo) => todo.completed);
+		const comletedIds = completedTodos.map((todo) => todo.id);
+		const deleteRequests = completedTodos.map((todo) =>
+			this.http.delete(`${this.apiUrl}/${todo.id}`),
+		);
+		forkJoin(deleteRequests).subscribe({
+			next: () => {
+				const updatedTodos = this.todosLoaded().filter(
+					(todo) => !comletedIds.includes(todo.id),
+				);
+				this.todosLoaded.set(updatedTodos);
+				this.isLoading.set(false);
+			},
+			error: () => {
+				this.errorMessage.set("Failed to delete todos.");
+				this.isLoading.set(false);
+			},
+		});
 	}
 
 	private initLoading(): void {

@@ -12,8 +12,13 @@ export class TodoFooterComponent {
 	private todoService = inject(TodoService);
 	activeTodosCount = this.todoService.activeTodosCount;
 	allTodosCount = this.todoService.allTodosCount;
+	someTodoComleted = this.todoService.someTodoComleted;
 	activeTodosText = computed(
 		() =>
 			`${this.activeTodosCount()} ${this.activeTodosCount() === 1 ? "item" : "items"} left`,
 	);
+
+	clearCompleted() {
+		this.todoService.clearCompleted();
+	}
 }
