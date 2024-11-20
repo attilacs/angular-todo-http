@@ -1,7 +1,14 @@
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
-    @if(allTodosCount()){
-    <input type="checkbox" [checked]="isAllCompleted()" (change)="toggleAll($event)">
-    }
-    <input type="text" formControlName="title" (keyup.enter)="onEnter()" placeholder="What needs to be done?"
-        autofocus="" />
+    <div class="input-group mb-3">
+        <div class="input-group-text">
+            @if(allTodosCount()){
+            <input class="form-check-input mt-0" type="checkbox" [checked]="isAllCompleted()"
+                (change)="toggleAll($event)">
+            } @else {
+            <input class="form-check-input mt-0 invisible" type="checkbox">
+            }
+        </div>
+        <input class="form-control" type="text" formControlName="title" (keyup.enter)="onEnter()"
+            placeholder="What needs to be done?" autofocus="" />
+    </div>
 </form>

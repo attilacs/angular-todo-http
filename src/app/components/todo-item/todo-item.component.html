@@ -1,10 +1,10 @@
-<li>
+<li class="list-group-item d-flex align-items-center">
     @if(isEditing()) {
-    <input #todoInputRef [(ngModel)]="title" (keyup.enter)="updateTitle()" (blur)="handleBlur()"
+    <input class="form-control" #todoInputRef [(ngModel)]="title" (keyup.enter)="updateTitle()" (blur)="handleBlur()"
         (focus)="handleFocus()" />
     } @else {
-    <input type="checkbox" [checked]="todo().completed" (click)="toggleTodo()">
-    <span (dblclick)="startEdit()">{{ todo().title }}</span>
-    <button type="button" (click)="deleteTodo()">Delete</button>
+    <input class="form-check-input me-2" type="checkbox" [checked]="todo().completed" (click)="toggleTodo()">
+    <span class="w-100 text-truncate" (dblclick)="startEdit()">{{ todo().title }}</span>
+    <i class="ms-auto bi bi-trash text-danger" (click)="deleteTodo()"></i>
     }
 </li>

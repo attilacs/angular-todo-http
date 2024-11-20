@@ -1,21 +1,23 @@
 @if(allTodosCount()){
-<footer>
-    <div>
+<footer class="mb-3 px-2 d-flex justify-content-between">
+    <div class="w-25 my-auto">
         <span>{{ activeTodosText() }}</span>
     </div>
-    <ul>
-        <li>
+    <ul class="d-flex m-auto list-unstyled">
+        <li class="mx-1">
             <a routerLink="/" [class.selected]="path ==='all'">All</a>
         </li>
-        <li>
+        <li class="mx-1">
             <a routerLink="/active" [class.selected]="path ==='active'">Active</a>
         </li>
-        <li>
+        <li class="mx-1">
             <a routerLink="/completed" [class.selected]="path ==='completed'">Completed</a>
         </li>
     </ul>
     @if(someTodoComleted()){
-    <button type="button" (click)="clearCompleted()">Clear completed</button>
+    <button type="button" class="btn btn-warning" (click)="clearCompleted()">Clear completed</button>
+    } @else {
+    <button class="invisible btn btn-warning" type="button">Clear completed</button>
     }
 </footer>
 }
