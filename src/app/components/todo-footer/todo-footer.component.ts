@@ -5,7 +5,6 @@ import { Location } from "@angular/common";
 
 @Component({
 	selector: "app-todo-footer",
-	standalone: true,
 	imports: [RouterLink],
 	templateUrl: "./todo-footer.component.html",
 	styleUrl: "./todo-footer.component.scss",

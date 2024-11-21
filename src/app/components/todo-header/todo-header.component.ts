@@ -4,7 +4,6 @@ import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
 
 @Component({
 	selector: "app-todo-header",
-	standalone: true,
 	imports: [ReactiveFormsModule],
 	templateUrl: "./todo-header.component.html",
 	styleUrl: "./todo-header.component.scss",

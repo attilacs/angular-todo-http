@@ -5,7 +5,6 @@ import { TodoFooterComponent } from "./components/todo-footer/todo-footer.compon
 
 @Component({
 	selector: "app-root",
-	standalone: true,
 	imports: [TodoHeaderComponent, TodoListComponent, TodoFooterComponent],
 	templateUrl: "./app.component.html",
 	styleUrl: "./app.component.scss",

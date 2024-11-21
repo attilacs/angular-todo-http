@@ -5,7 +5,6 @@ import { Location } from "@angular/common";
 
 @Component({
 	selector: "app-todo-list",
-	standalone: true,
 	imports: [TodoItemComponent],
 	templateUrl: "./todo-list.component.html",
 	styleUrl: "./todo-list.component.scss",
